@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة الطلاب المسجلين</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            direction: rtl;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .filter-box {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+        }
+        select, button {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1><i class="fa-solid fa-users"></i> قائمة الطلاب المسجلين</h1>
+
+    <!-- ✅ نموذج الفلترة -->
+    <div class="filter-box">
+        <form method="GET" action="{{ url_for('students') }}">
+            <label for="year"><i class="fa-solid fa-calendar"></i> اختر الفرقة:</label>
+            <select name="year" id="year">
+                <option value="">الكل</option>
+                {% for y in years %}
+                    <option value="{{ y.year }}">{{ y.year }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="department_id"><i class="fa-solid fa-building"></i> اختر القسم:</label>
+            <select name="department_id" id="department_id">
+                <option value="">الكل</option>
+                {% for dep in departments %}
+                    <option value="{{ dep.id }}">{{ dep.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="school_id"><i class="fa-solid fa-school"></i> اختر المدرسة:</label>
+            <select name="school_id" id="school_id">
+                <option value="">الكل</option>
+                {% for sch in schools %}
+                    <option value="{{ sch.id }}">{{ sch.name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit"><i class="fa-solid fa-filter"></i> تصفية</button>
+        </form>
+    </div>
+
+    <!-- ✅ جدول عرض البيانات -->
+    <table>
+        <tr>
+            <th><i class="fa-solid fa-user"></i> الاسم</th>
+            <th><i class="fa-solid fa-id-card"></i> الرقم القومي</th>
+            <th><i class="fa-solid fa-building"></i> القسم</th>
+            <th><i class="fa-solid fa-calendar"></i> الفرقة</th>
+            <th><i class="fa-solid fa-school"></i> المدرسة</th>
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>{{ student.national_id }}</td>
+            <td>{{ student.department_name }}</td>
+            <td>{{ student.year }}</td>
+            <td>{{ student.school_name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+<button onclick="window.location.href='{{ url_for('export_pdf') }}'" style="background-color: #dc3545;">
+    <i class="fa-solid fa-file-pdf"></i> تصدير إلى PDF
+</button>
+
+    <!-- ✅ زر الرجوع -->
+    <a href="{{ url_for('admin') }}" class="back-btn"><i class="fa-solid fa-arrow-left"></i> رجوع إلى لوحة التحكم</a>
+</body>
+</html>

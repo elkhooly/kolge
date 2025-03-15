@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الطلاب</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: center;
+        }
+        input, select, button {
+            display: block;
+            width: 50%;
+            padding: 10px;
+            margin: 10px auto;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>تسجيل الطلاب</h2>
+
+<form action="/register" method="post">
+    <input type="text" name="name" placeholder="اسم الطالب" required>
+
+    <input type="text" name="national_id" placeholder="الرقم القومي" required pattern="\d{14}" title="يجب أن يتكون الرقم القومي من 14 رقمًا">
+
+    <label for="department">اختر القسم:</label>
+    <select name="department" id="department" required>
+        {% for department in departments %}
+        <option value="{{ department.id }}">{{ department.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="year">اختر الفرقة الدراسية:</label>
+    <select name="year" id="year" required>
+        <option value="الأولى">الأولى</option>
+        <option value="الثانية">الثانية</option>
+        <option value="الثالثة">الثالثة</option>
+        <option value="الرابعة">الرابعة</option>
+    </select>
+
+    <label for="school">اختر المدرسة:</label>
+    <select name="school" id="school" required>
+        <option value="">اختر القسم والفرقة أولاً</option>
+    </select>
+
+    <button type="submit">تسجيل</button>
+</form>
+
+<script>
+document.getElementById("department").addEventListener("change", updateSchools);
+document.getElementById("year").addEventListener("change", updateSchools);
+
+function updateSchools() {
+    let departmentId = document.getElementById("department").value;
+    let year = document.getElementById("year").value;
+    let schoolSelect = document.getElementById("school");
+
+    if (!departmentId || !year) {
+        schoolSelect.innerHTML = '<option value="">اختر القسم والفرقة أولاً</option>';
+        return;
+    }
+
+    fetch('/get_schools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ department_id: departmentId, year: year })
+    })
+    .then(response => response.json())
+    .then(data => {
+        schoolSelect.innerHTML = '';
+        if (data.schools.length === 0) {
+            schoolSelect.innerHTML = '<option value="">لا توجد مدارس متاحة</option>';
+        } else {
+            data.schools.forEach(school => {
+                let option = document.createElement('option');
+                option.value = school.id;
+                option.textContent = school.name;
+                schoolSelect.appendChild(option);
+            });
+        }
+    });
+}
+</script>
+
+</body>
+</html>

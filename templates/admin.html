@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الإدارية</title>
+    <style>
+        :root {
+            --primary-color: #2A5C82;
+            --secondary-color: #5BA4E6;
+            --accent-color: #FF7E67;
+            --light-bg: #F8FAFC;
+            --text-color: #2D3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            direction: rtl;
+            background: var(--light-bg);
+            color: var(--text-color);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h2 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            margin: 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-tab {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .nav-tab.active {
+            border-color: var(--accent-color);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(91, 164, 230, 0.2);
+        }
+
+        button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 15px rgba(0,0,0,0.05);
+        }
+
+        .data-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 18px;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #EDF2F7;
+        }
+
+        .data-table tr:hover {
+            background: #F8FAFF;
+        }
+
+        .schools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .school-card {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+            text-align: center;
+        }
+
+        .students-link {
+            display: block;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .students-link:hover {
+            background: rgba(255, 126, 103, 0.1);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h2>لوحة التحكم الإدارية 🚀</h2>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab(0)">🏫 إدارة المدارس</div>
+            <div class="nav-tab" onclick="showTab(1)">📚 إدارة الأقسام</div>
+            <div class="nav-tab" onclick="showTab(2)">⚙️ الإعدادات</div>
+        </div>
+
+        <a href="{{ url_for('students') }}" class="students-link">📋 الانتقال إلى قائمة الطلاب →</a>
+
+        <!-- تبويب إدارة المدارس -->
+        <div class="tab-content active" id="tab-0">
+            <h3>إضافة مدرسة جديدة</h3>
+            <form action="/add_school" method="post">
+                <input type="text" name="school_name" placeholder="اسم المدرسة" required>
+                <button type="submit">إضافة المدرسة</button>
+            </form>
+
+            <h3>المدارس المتاحة</h3>
+            <table class="data-table">
+                <tr>
+                    <th>#</th>
+                    <th>اسم المدرسة</th>
+                </tr>
+                {% for school in schools %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ school.name }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- تبويب إدارة الأقسام -->
+        <div class="tab-content" id="tab-1">
+            <h3>إضافة قسم جديد</h3>
+            <form action="/add_department" method="post">
+                <input type="text" name="department_name" placeholder="اسم القسم" required>
+                <button type="submit">إضافة القسم</button>
+            </form>
+
+            <h3>الأقسام المتاحة</h3>
+            <table class="data-table">
+                <tr>
+                    <th>#</th>
+                    <th>اسم القسم</th>
+                </tr>
+                {% for department in departments %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ department.name }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- تبويب الإعدادات -->
+        <div class="tab-content" id="tab-2">
+            <h3>إعداد المدارس والأقسام</h3>
+            <form action="/assign_school_department" method="post">
+                <label>اختر القسم:</label>
+                <select name="department_id" required>
+                    {% for department in departments %}
+                    <option value="{{ department.id }}">{{ department.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>اختر الفرقة الدراسية:</label>
+                <select name="year" required>
+                    <option value="الأولى">الأولى</option>
+                    <option value="الثانية">الثانية</option>
+                    <option value="الثالثة">الثالثة</option>
+                    <option value="الرابعة">الرابعة</option>
+                </select>
+
+                <h3>اختر المدارس المتاحة:</h3>
+                <div class="schools-grid">
+                    {% for school in schools %}
+                    <div class="school-card">
+                        <input type="checkbox" name="school_ids" value="{{ school.id }}" id="school{{ school.id }}">
+                        <label for="school{{ school.id }}">{{ school.name }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <label>الحد الأقصى للطلاب:</label>
+                <input type="number" name="max_students" placeholder="عدد الطلاب" min="1" required>
+                <button type="submit">حفظ الإعدادات</button>
+            </form>
+
+            <h3>الإعدادات المطبقة</h3>
+            <table class="data-table">
+                <tr>
+                    <th>#</th>
+                    <th>اسم القسم</th>
+                    <th>الفرقة الدراسية</th>
+                    <th>المدارس المتاحة</th>
+                    <th>الحد الأقصى للطلاب</th>
+                </tr>
+                {% for group in school_departments %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ group.department_name }}</td>
+                    <td>{{ group.year }}</td>
+                    <td>{{ group.school_names }}</td>
+                    <td>{{ group.max_students }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showTab(index) {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.transform = 'translateY(0)';
+            });
+
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            const activeTab = document.querySelectorAll('.nav-tab')[index];
+            activeTab.classList.add('active');
+            activeTab.style.transform = 'translateY(-5px)';
+
+            document.querySelectorAll('.tab-content')[index].style.display = 'block';
+        }
+    </script>
+</body>
+</html>
